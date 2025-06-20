@@ -8,20 +8,20 @@ abstract class ProductEvent {}
 class AddProductEvent extends ProductEvent {
   final ProductModel product;
   // final List<Uint8List> images;
-  final List<List<Uint8List>> varientImages;
+  final List<List<Uint8List>?>? varientImages;
   AddProductEvent(this.product, this.varientImages);
 }
 
 class EditProductEvent extends ProductEvent {
   final ProductModel updatedProduct;
   // final List<Uint8List> newMainImagesBytes; // Newly picked images as bytes
-  final List<String>
-  oldMainImageUrls; // Original URLs from the product being edited
+  final List<List<Uint8List>?>?
+  newVarientList; // Original URLs from the product being edited
 
   EditProductEvent({
     required this.updatedProduct,
     // required this.newMainImagesBytes,
-    required this.oldMainImageUrls,
+    required this.newVarientList,
   });
 }
 

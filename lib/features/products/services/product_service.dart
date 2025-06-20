@@ -7,15 +7,14 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-import 'package:techmart_seller/features/products/models/catagory_model.dart';
+import 'package:techmart_seller/features/products/models/catagory_varient_model.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
 import 'package:techmart_seller/features/products/models/product_varient_model.dart'; // Ensure this is imported
 
 class ProductService {
-  final CollectionReference _productRef = FirebaseFirestore.instance.collection(
-    "Products",
-  );
-  final userUid = FirebaseAuth.instance.currentUser?.uid;
+  static final CollectionReference _productRef = FirebaseFirestore.instance
+      .collection("Products");
+  static final userUid = FirebaseAuth.instance.currentUser?.uid ?? "hello";
   static const cloudName = "dmkamtddy";
   static const cloudPreset = "flutter_uploads";
   static const cloudApiKey = "956275761217399";
@@ -57,8 +56,12 @@ class ProductService {
     }
   }
 
-  Future<List<String>> uploadImages(List<Uint8List> images) async {
+  Future<List<String>> uploadImages(List<Uint8List>? images) async {
+    if (images == null || images.isEmpty) {
+      return [];
+    }
     List<String> imageUrls = [];
+
     for (var image in images) {
       final url = await sendImageToCloudinary(image);
       if (url != null) {
@@ -71,9 +74,9 @@ class ProductService {
   }
 
   /// Fetch products filtered by seller UID (for display on seller's product list)
-  Stream<List<ProductModel>> fetchProductsBySeller() {
+  static Stream<List<ProductModel>> fetchProductsBySeller() {
     return _productRef
-        .where("sellerUid", isEqualTo: userUid)
+        // .where("sellerUid", isEqualTo: userUid)
         .snapshots()
         .map(
           (snapshot) =>
@@ -89,10 +92,12 @@ class ProductService {
 
   Future<List<ProductVarientModel>> uploadVariantImagesAndGetModels(
     List<ProductVarientModel> variants,
-    List<List<Uint8List>> rawVariantImagesList,
+    List<List<Uint8List>?> rawVariantImagesList,
   ) async {
-    // rawVariantImagesList[i] corresponds to variant[i]
-    assert(variants.length == rawVariantImagesList.length);
+    assert(
+      variants.length == rawVariantImagesList.length,
+      'Variants and image lists must have the same length',
+    );
 
     List<ProductVarientModel> updatedVariants = [];
 
@@ -100,19 +105,13 @@ class ProductService {
       final variant = variants[i];
       final images = rawVariantImagesList[i];
 
-      final imageUrls = await uploadImages(images); // already available
+      // Preserve existing image URLs if no new images are provided
+      final imageUrls =
+          images != null && images.isNotEmpty
+              ? await uploadImages(images)
+              : variant.variantImageUrls ?? [];
 
-      updatedVariants.add(
-        ProductVarientModel(
-          buyingPrice: variant.buyingPrice,
-          quantity: variant.quantity,
-          regularPrice: variant.regularPrice,
-          sellingPrice: variant.sellingPrice,
-          variantAttributes: variant.variantAttributes,
-
-          variantImageUrls: imageUrls,
-        ),
-      );
+      updatedVariants.add(variant.copyWith(variantImageUrls: imageUrls));
     }
 
     return updatedVariants;
@@ -122,25 +121,32 @@ class ProductService {
   Future<void> addProduct(
     ProductModel product,
     // List<Uint8List> mainImages,
-    List<List<Uint8List>> variantImages, // Add this
+    List<List<Uint8List>?>? rawVariantImagesLists, // Add this
   ) async {
     try {
       final docRef = _productRef.doc();
       product.productId = docRef.id;
-
+      log("product Id${product.productId.toString()}");
       // Upload main product images
       // final imageUrls = await uploadImages(mainImages);
       // product.imageUrls = imageUrls;
 
       // Upload variant images and update variant models
-      final updatedVariants = await uploadVariantImagesAndGetModels(
-        product.varients,
-        variantImages,
-      );
+      List<ProductVarientModel> updatedVariants = product.varients;
+      if (rawVariantImagesLists != null && rawVariantImagesLists.isNotEmpty) {
+        updatedVariants = await uploadVariantImagesAndGetModels(
+          product.varients,
+          rawVariantImagesLists,
+        );
+      }
 
       product.varients = updatedVariants;
-
-      await docRef.set(product.toMap());
+      log("product Id${product.toString()}");
+      assert(
+        product.productId != null && product.productId!.isNotEmpty,
+        "productI os null",
+      );
+      await _productRef.doc(product.productId).set(product.toMap());
       log("✅ Product added successfully!");
     } catch (e) {
       log("❌ Error adding product: $e");
@@ -151,53 +157,82 @@ class ProductService {
   /// Edit product data, handling image re-upload and deletion
   Future<void> editProduct(
     ProductModel updatedProduct,
-    // List<Uint8List> newMainImagesBytes,
-    // List<String> oldMainImageUrls,
+    List<List<Uint8List>?>? rawVariantImagesLists,
   ) async {
     try {
       if (updatedProduct.productId == null) {
         throw 'Product ID is required for editing.';
       }
 
-      // 1. Upload new main images
-      List<String> uploadedNewMainImageUrls = [];
-      // if (newMainImagesBytes.isNotEmpty) {
-      //   uploadedNewMainImageUrls = await uploadImages(newMainImagesBytes);
-      // }
+      // Fetch the existing product to preserve unchanged variants
+      final existingProductDoc =
+          await _productRef.doc(updatedProduct.productId).get();
+      final existingProduct = ProductModel.fromMap(
+        existingProductDoc.data() as Map<String, dynamic>,
+      );
 
-      // 2. Combine old and new image URLs for the updated product model
-      // We are *replacing* the main images list with a new one containing only the selected/newly uploaded ones.
-      // This means if user removes an old image from UI and doesn't replace it, it won't be in this new list.
-      // updatedProduct.imageUrls = uploadedNewMainImageUrls;
+      List<ProductVarientModel> updatedVariants = updatedProduct.varients;
+      if (rawVariantImagesLists != null && rawVariantImagesLists.isNotEmpty) {
+        // Match existing variants with new image data based on attributes
+        updatedVariants = await _updateVariantsWithImages(
+          existingProduct.varients,
+          updatedProduct.varients,
+          rawVariantImagesLists,
+        );
+      } else {
+        // No new images provided, retain existing images
+        updatedVariants =
+            updatedProduct.varients.map((variant) {
+              final existingVariant = existingProduct.varients.firstWhere(
+                (ev) => ev.variantAttributes == variant.variantAttributes,
+                orElse: () => variant,
+              );
+              return variant.copyWith(
+                variantImageUrls: existingVariant.variantImageUrls ?? [],
+              );
+            }).toList();
+      }
 
-      // 3. Update Firestore document
+      final finalProduct = updatedProduct.copyWith(varients: updatedVariants);
       await _productRef
-          .doc(updatedProduct.productId)
-          .update(updatedProduct.toMap());
+          .doc(finalProduct.productId)
+          .update(finalProduct.toMap());
       log("✅ Product updated successfully!");
-
-      // 4. Delete old main images from Cloudinary (AFTER successful Firestore update)
-      // Only delete images that were in the original list but are NOT in the final list
-      // Set<String> finalUrlsSet = updatedProduct.imageUrls?.toSet() ?? {};
-      // Set<String> oldUrlsSet = oldMainImageUrls.toSet();
-
-      // for (final url in oldUrlsSet) {
-      //   if (!finalUrlsSet.contains(url)) {
-      //     await _deleteImageFromCloudinary(url);
-      //   }
-      // }
-
-      // Note: Variant image URLs within updatedProduct.varients are assumed
-      // to be already handled (uploaded) by the _addVariant logic on the screen.
-      // Deletion of specific old variant images is a complex UI/service task
-      // that is beyond the scope of this general edit.
-      // When a variant itself is removed from the _productVariants list, its images
-      // won't be explicitly deleted here. They will only be deleted when the
-      // entire product is deleted via deleteProduct.
     } catch (e) {
       log("❌ Error editing product: $e");
       rethrow;
     }
+  }
+
+  Future<List<ProductVarientModel>> _updateVariantsWithImages(
+    List<ProductVarientModel> existingVariants,
+    List<ProductVarientModel> updatedVariants,
+    List<List<Uint8List>?> rawVariantImagesLists,
+  ) async {
+    assert(
+      updatedVariants.length == rawVariantImagesLists.length,
+      'Updated variants and image lists must have the same length',
+    );
+
+    List<ProductVarientModel> result = [];
+
+    for (int i = 0; i < updatedVariants.length; i++) {
+      final updatedVariant = updatedVariants[i];
+      final images = rawVariantImagesLists[i];
+      final existingVariant = existingVariants.firstWhere(
+        (ev) => ev.variantAttributes == updatedVariant.variantAttributes,
+        orElse: () => updatedVariant, // New variant if not found
+      );
+
+      final imageUrls =
+          images != null && images.isNotEmpty
+              ? await uploadImages(images)
+              : existingVariant.variantImageUrls ?? [];
+
+      result.add(updatedVariant.copyWith(variantImageUrls: imageUrls));
+    }
+
+    return result;
   }
 
   Future<void> deleteProduct(ProductModel product) async {
@@ -290,5 +325,16 @@ class ProductService {
     return (doc["varientOptions"] as List)
         .map((e) => CatagoryVarient.fromMap(e))
         .toList();
+  }
+
+  static Future<String> getCataagaryNameById(String id) async {
+    return await categoriesRef
+        .doc(id)
+        .get()
+        .then((doc) => CatagoryVarient.catagoryFromMap(doc.data()!).name);
+  }
+
+  static Future<String> getBrandNameById(String id) async {
+    return await brandsRef.doc(id).get().then((doc) => doc["name"]);
   }
 }

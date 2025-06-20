@@ -39,4 +39,21 @@ class ProductVarientModel {
           (map["variantImageUrls"] as List?)?.map((e) => e.toString()).toList(),
     );
   }
+  ProductVarientModel copyWith({
+    int? buyingPrice,
+    int? quantity,
+    int? regularPrice,
+    int? sellingPrice,
+    Map<String, String?>? variantAttributes,
+    List<String>? variantImageUrls,
+  }) {
+    return ProductVarientModel(
+      buyingPrice: buyingPrice ?? this.buyingPrice,
+      quantity: quantity ?? this.quantity,
+      regularPrice: regularPrice ?? this.regularPrice,
+      sellingPrice: sellingPrice ?? this.sellingPrice,
+      variantAttributes: variantAttributes ?? this.variantAttributes,
+      variantImageUrls: variantImageUrls ?? this.variantImageUrls,
+    );
+  }
 }

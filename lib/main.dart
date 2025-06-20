@@ -9,8 +9,7 @@ import 'package:techmart_seller/features/products/bloc/product_bloc.dart';
 import 'package:techmart_seller/features/products/services/product_service.dart';
 import 'package:techmart_seller/features/authentication/screens/login_screen.dart';
 import 'package:techmart_seller/firebase_options.dart';
-import 'package:techmart_seller/screens/products_screen.dart';
-import 'package:techmart_seller/screens/sample.dart';
+import 'package:techmart_seller/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +42,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: Sample(),
+        home: SellerHomeScreen(),
       ),
     );
   }

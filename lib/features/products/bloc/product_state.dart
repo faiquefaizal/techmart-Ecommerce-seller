@@ -18,14 +18,14 @@ class ProductErrorState extends ProductState {
   ProductErrorState(this.error);
 }
 
-class SellerProductsLoading extends ProductState {}
+// class SellerProductsLoading extends ProductState {}
 
-class SellerProductsLoaded extends ProductState {
-  final List<ProductModel> products;
-  SellerProductsLoaded(this.products);
-}
+// class SellerProductsLoaded extends ProductState {
+//   final List<ProductModel> products;
+//   SellerProductsLoaded(this.products);
+// }
 
-class SellerProductsError extends ProductState {
-  final String message;
-  SellerProductsError(this.message);
-}
+// class SellerProductsError extends ProductState {
+//   final String message;
+//   SellerProductsError(this.message);
+// }

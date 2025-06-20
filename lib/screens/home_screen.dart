@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:techmart_seller/core/funtion/pick_images/cubit/image_cubit.dart';
+import 'package:techmart_seller/features/products/cubit/catagory_cubit.dart';
+import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
+import 'package:techmart_seller/features/products/models/product_model.dart';
+import 'package:techmart_seller/features/products/presentation/screens/add_product_screen.dart';
+import 'package:techmart_seller/features/products/presentation/screens/edit_product_screen.dart';
+import 'package:techmart_seller/features/products/presentation/screens/products_screen.dart';
+import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
 import 'package:techmart_seller/screens/categaries_screen.dart';
-import 'package:techmart_seller/screens/sample.dart';
+
 import 'dashboard_screen.dart';
-import 'products_screen.dart';
-import 'add_product_screen.dart';
+
 import 'orders_screen.dart';
 import 'returns_screen.dart';
 
@@ -18,7 +26,7 @@ class SellerHomeScreen extends StatefulWidget {
 class _SellerHomeScreenState extends State<SellerHomeScreen> {
   PageController pageController = PageController();
   SideMenuController sideMenu = SideMenuController();
-
+  ProductModel? editingProduct;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,13 +82,40 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           Expanded(
             child: PageView(
               controller: pageController,
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 DashboardScreen(),
-                Sample(),
-                // AddProductScreen(),
-                // EditProductScreen(),
+                ProductsScreen(
+                  onEdit: (product) {
+                    setState(() {
+                      editingProduct = product;
+                    });
+                    pageController.jumpToPage(6); // Navigate to edit screen
+                  },
+                ),
+                AddProductScreen(),
                 OrdersScreen(),
                 ReturnsScreen(),
+                if (editingProduct != null)
+                  MultiBlocProvider(
+                    providers: [
+                      BlocProvider(create: (_) => CatagoryCubit()),
+                      BlocProvider(create: (_) => CurrentVarientCubit()),
+                      BlocProvider(create: (_) => ProductVarientCubit()),
+                      BlocProvider(create: (_) => ImageCubit()),
+                    ],
+                    child: EditProductScreen(
+                      product: editingProduct!,
+                      onBack: () {
+                        setState(() {
+                          editingProduct = null;
+                        });
+                        pageController.jumpToPage(1); // Back to products page
+                      },
+                    ),
+                  )
+                else
+                  const Center(child: Text("No product selected to edit")),
               ],
             ),
           ),

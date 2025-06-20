@@ -14,6 +14,10 @@ class CurrentVarientCubit extends Cubit<CurrentVarientState> {
     emit(state.copyWith(brandId: brandId));
   }
 
+  void updateBrandIdAndCategoryId(String brandId, String catagoryId) {
+    emit(state.copyWith(brandId: brandId, categoryId: catagoryId));
+  }
+
   void updateVariantAttribute(String variantName, String? variantValue) {
     final updatedAttributes = Map<String, String?>.from(
       state.variantAttributes,
@@ -24,5 +28,11 @@ class CurrentVarientCubit extends Cubit<CurrentVarientState> {
 
   void clearInputs() {
     emit(state.copyWith(variantAttributes: {}));
+  }
+
+  void clearAllInputs() {
+    emit(
+      state.copyWith(variantAttributes: {}, categoryId: null, brandId: null),
+    );
   }
 }

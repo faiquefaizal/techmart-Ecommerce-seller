@@ -7,4 +7,8 @@ class CatagoryCubit extends Cubit<String?> {
   void selectCategory(String? id) {
     emit(id);
   }
+
+  void clear() {
+    emit(null);
+  }
 }

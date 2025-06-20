@@ -10,9 +10,14 @@ part 'product_varient_state.dart';
 class ProductVarientCubit extends Cubit<ProductVarientState> {
   ProductVarientCubit() : super(ProductVarientInitial());
   final List<ProductVarientModel> _productVarientList = [];
-  final List<List<Uint8List>> _imagesVarientList = [];
-  List<List<Uint8List>> get rawVariantImagesLists =>
+  List<ProductVarientModel> get productVarientList =>
+      List.unmodifiable(_productVarientList);
+  final List<List<Uint8List>?> _imagesVarientList = [];
+  List<List<Uint8List>?> get rawVariantImagesLists =>
       List.unmodifiable(_imagesVarientList);
+  final List<List<String>> _imageVarietUrlList = [];
+  List<List<String>> get imageProductVarientUrlList =>
+      List.unmodifiable(_imageVarietUrlList);
 
   void addProductVarient(
     ProductVarientModel product,
@@ -20,9 +25,44 @@ class ProductVarientCubit extends Cubit<ProductVarientState> {
   ) {
     try {
       _productVarientList.add(product);
-      _imagesVarientList.add(rawImages);
+      _imagesVarientList.add(rawImages.isEmpty ? null : rawImages);
+      _imageVarietUrlList.add(product.variantImageUrls ?? []);
+      log("url $_imageVarietUrlList");
+      log("local ${_imagesVarientList.length}");
+      emit(
+        ProductVarintLoaded(
+          productVarient: List.from(_productVarientList),
+          imageLIst: List.from(_imagesVarientList),
+          imageUrlList: List.from(_imageVarietUrlList),
+        ),
+      );
+      log(
+        "Added variant: ${_productVarientList.length}, Images: ${_imagesVarientList.length}",
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
-      emit(ProductVarintLoaded(productVarient: List.from(_productVarientList)));
+  void fillProductVarient(List<ProductVarientModel> productVairents) {
+    try {
+      _productVarientList.clear();
+      _productVarientList.addAll(productVairents);
+      _imagesVarientList.clear();
+      _imagesVarientList.addAll(
+        List.generate(productVairents.length, (_) => []),
+      );
+      _imageVarietUrlList.clear();
+      _imageVarietUrlList.addAll(
+        productVairents.map((varient) => varient.variantImageUrls!),
+      );
+      emit(
+        ProductVarintLoaded(
+          productVarient: List.from(_productVarientList),
+          imageLIst: List.from(_imagesVarientList),
+          imageUrlList: List.from(_imageVarietUrlList),
+        ),
+      );
     } catch (e) {
       log(e.toString());
     }
@@ -33,8 +73,13 @@ class ProductVarientCubit extends Cubit<ProductVarientState> {
       if (_productVarientList.isNotEmpty) {
         _productVarientList.removeAt(index);
         _imagesVarientList.removeAt(index);
+        _imageVarietUrlList.removeAt(index);
         emit(
-          ProductVarintLoaded(productVarient: List.from(_productVarientList)),
+          ProductVarintLoaded(
+            productVarient: List.from(_productVarientList),
+            imageLIst: List.from(_imagesVarientList),
+            imageUrlList: List.from(_imageVarietUrlList),
+          ),
         );
       } else {
         emit(ProductVarientInitial());
@@ -48,6 +93,7 @@ class ProductVarientCubit extends Cubit<ProductVarientState> {
   void clearAllVariants() {
     _productVarientList.clear();
     _imagesVarientList.clear();
+    _imageVarietUrlList.clear();
     emit(ProductVarientInitial());
   }
 }
