@@ -76,7 +76,7 @@ class ProductService {
   /// Fetch products filtered by seller UID (for display on seller's product list)
   static Stream<List<ProductModel>> fetchProductsBySeller() {
     return _productRef
-        // .where("sellerUid", isEqualTo: userUid)
+        .where("sellerUid", isEqualTo: userUid)
         .snapshots()
         .map(
           (snapshot) =>
