@@ -124,8 +124,16 @@ class ProductService {
   ) async {
     try {
       final docRef = _productRef;
-      ;
+      int minPrice = varients
+          .map((v) => v.regularPrice)
+          .reduce((a, b) => a < b ? a : b);
+      int maxPrice = varients
+          .map((v) => v.regularPrice)
+          .reduce((a, b) => a > b ? a : b);
       product.productId = generateFirestoreId();
+      product.minPrice = minPrice;
+      product.maxPrice = maxPrice;
+
       log("product Id${product.productId.toString()}");
       await docRef.doc(product.productId).set(product.toMap());
 
@@ -174,7 +182,14 @@ class ProductService {
 
       final productDocRef = _productRef.doc(updatedProduct.productId);
       final varientDocRef = productDocRef.collection("varients");
-
+      int minPrice = varientList
+          .map((v) => v.regularPrice)
+          .reduce((a, b) => a < b ? a : b);
+      int maxPrice = varientList
+          .map((v) => v.regularPrice)
+          .reduce((a, b) => a > b ? a : b);
+      updatedProduct.maxPrice = maxPrice;
+      updatedProduct.minPrice = minPrice;
       await productDocRef.update(updatedProduct.toMap());
 
       final existingSnopt = await varientDocRef.get();

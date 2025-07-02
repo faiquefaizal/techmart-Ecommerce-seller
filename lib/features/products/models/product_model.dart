@@ -9,6 +9,8 @@ class ProductModel {
   String sellerUid;
   String categoryId;
   String brandId;
+  int? minPrice;
+  int? maxPrice;
   // List<String>? imageUrls;
   // List<ProductVarientModel> varients;
 
@@ -20,6 +22,8 @@ class ProductModel {
     required this.productDescription,
     required this.productName,
     required this.sellerUid,
+    this.minPrice,
+    this.maxPrice,
     // required this.varients,
   });
 
@@ -31,6 +35,8 @@ class ProductModel {
       "sellerUid": sellerUid,
       "brandId": brandId,
       "categoryId": categoryId,
+      "minPrice": minPrice,
+      "maxPrice": maxPrice,
       // "imageUrls": imageUrls,
       // "varients": varients.map((e) => e.toMap()).toList(),
     };
@@ -45,6 +51,8 @@ class ProductModel {
       productDescription: map["productDescription"],
       productName: map["productName"],
       sellerUid: map["sellerUid"],
+      minPrice: map["minPrice"],
+      maxPrice: map["maxPrice"],
       // varients:
       //     (map["varients"] as List<dynamic>?)
       //         ?.map(

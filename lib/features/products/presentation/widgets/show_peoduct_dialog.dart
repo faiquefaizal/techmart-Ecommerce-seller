@@ -134,6 +134,7 @@ void showProductDetailsDialog({
                           "No variants available",
                           style: TextStyle(fontSize: 16, color: Colors.grey),
                         );
+
                       }
                       return ListView.builder(
                         shrinkWrap: true,
@@ -142,6 +143,7 @@ void showProductDetailsDialog({
                         itemBuilder: (context, index) {
                           final variant = asyncSnapshot.data![index];
                           final variantName = variant.variantAttributes.entries
+                          
                               .map((e) => "${e.key}: ${e.value}")
                               .join(", ");
                           return Card(
