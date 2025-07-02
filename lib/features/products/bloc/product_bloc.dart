@@ -5,7 +5,7 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techmart_seller/features/products/bloc/product_event.dart';
 import 'package:techmart_seller/features/products/bloc/product_state.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductService _productService;
@@ -16,7 +16,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       try {
         await _productService.addProduct(
           event.product,
-          // event.images,
+          event.variants,
           event.varientImages,
         );
         log(event.product.productId!);
@@ -31,7 +31,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       try {
         await _productService.editProduct(
           event.updatedProduct,
-          event.newVarientList,
+          event.updatedVarient,
+          event.newVarientImageList,
           // event.newMainImagesBytes, // Pass new image bytes
           // event.oldMainImageUrls, // Pass old image URLs for deletion comparison
         );

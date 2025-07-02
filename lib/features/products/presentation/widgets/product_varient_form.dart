@@ -8,7 +8,7 @@ import 'package:techmart_seller/core/widgets/text_fields.dart';
 import 'package:techmart_seller/features/products/cubit/catagory_cubit.dart';
 import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
 
 class ProductVarientForm extends StatelessWidget {
   TextEditingController quantityController = TextEditingController();

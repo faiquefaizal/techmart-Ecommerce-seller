@@ -12,7 +12,8 @@ import 'package:techmart_seller/features/products/presentation/screens/edit_prod
 import 'package:techmart_seller/features/products/presentation/widgets/delete_alert_dialog.dart';
 import 'package:techmart_seller/features/products/presentation/widgets/show_peoduct_dialog.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
+
 import 'package:techmart_seller/features/products/utils/price_utils.dart';
 
 class ProductsScreen extends StatelessWidget {
@@ -60,17 +61,6 @@ class ProductsScreen extends StatelessWidget {
                 ],
                 rows:
                     snapshot.data!.map((data) {
-                      final varientList = data.varients;
-                      final regularPrice = getMaxMinPriceFromVarients(
-                        varientList,
-                        "regularPrice",
-                      );
-                      final sellingPrice = getMaxMinPriceFromVarients(
-                        varientList,
-                        "sellingPrice",
-                      );
-                      final totalQuatity = getTotalStock(varientList);
-
                       return DataRow(
                         cells: [
                           DataCell(Text(data.productName)),
@@ -111,9 +101,77 @@ class ProductsScreen extends StatelessWidget {
                               },
                             ),
                           ),
-                          DataCell(Text(regularPrice)),
-                          DataCell(Text(sellingPrice)),
-                          DataCell(Text(totalQuatity.toString())),
+                          DataCell(
+                            FutureBuilder(
+                              future: ProductService.fetchVarientsByProductId(
+                                data.productId!,
+                              ),
+                              builder: (context, asyncSnapshot) {
+                                if (asyncSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text("Loading...");
+                                } else if (asyncSnapshot.hasError) {
+                                  return const Text("Error");
+                                } else if (!asyncSnapshot.hasData) {
+                                  return const Text("Is empty");
+                                }
+                                //  else if (!asyncSnapshot.hasData ||
+                                //     asyncSnapshot.data!.isEmpty) {
+                                //   return const Text("N/A");
+                                // }
+
+                                final varientList = asyncSnapshot.data;
+                                final regularPrice = getMaxMinPriceFromVarients(
+                                  varientList!,
+                                  "regularPrice",
+                                );
+                                return Text(regularPrice);
+                              },
+                            ),
+                          ),
+                          DataCell(
+                            FutureBuilder(
+                              future: ProductService.fetchVarientsByProductId(
+                                data.productId!,
+                              ),
+                              builder: (context, asyncSnapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text("Loading...");
+                                } else if (snapshot.hasError) {
+                                  return const Text("Error");
+                                }
+
+                                final varientList = asyncSnapshot.data;
+                                final sellingPrice = getMaxMinPriceFromVarients(
+                                  varientList!,
+                                  "sellingPrice",
+                                );
+                                return Text(sellingPrice);
+                              },
+                            ),
+                          ),
+                          DataCell(
+                            FutureBuilder(
+                              future: ProductService.fetchVarientsByProductId(
+                                data.productId!,
+                              ),
+                              builder: (context, asyncSnapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Text("Loading...");
+                                } else if (snapshot.hasError) {
+                                  return const Text("Error");
+                                }
+
+                                final varientList = asyncSnapshot.data;
+                                final totalQuatity = getTotalStock(
+                                  varientList!,
+                                );
+                                return Text(totalQuatity.toString());
+                              },
+                            ),
+                          ),
                           DataCell(
                             Row(
                               children: [

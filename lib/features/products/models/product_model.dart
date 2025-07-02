@@ -10,7 +10,7 @@ class ProductModel {
   String categoryId;
   String brandId;
   // List<String>? imageUrls;
-  List<ProductVarientModel> varients;
+  // List<ProductVarientModel> varients;
 
   ProductModel({
     this.productId,
@@ -20,7 +20,7 @@ class ProductModel {
     required this.productDescription,
     required this.productName,
     required this.sellerUid,
-    required this.varients,
+    // required this.varients,
   });
 
   Map<String, dynamic> toMap() {
@@ -32,7 +32,7 @@ class ProductModel {
       "brandId": brandId,
       "categoryId": categoryId,
       // "imageUrls": imageUrls,
-      "varients": varients.map((e) => e.toMap()).toList(),
+      // "varients": varients.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -45,13 +45,13 @@ class ProductModel {
       productDescription: map["productDescription"],
       productName: map["productName"],
       sellerUid: map["sellerUid"],
-      varients:
-          (map["varients"] as List<dynamic>?)
-              ?.map(
-                (e) => ProductVarientModel.fromMap(e as Map<String, dynamic>),
-              )
-              .toList() ??
-          [], // Provide empty list if null
+      // varients:
+      //     (map["varients"] as List<dynamic>?)
+      //         ?.map(
+      //           (e) => ProductVarientModel.fromMap(e as Map<String, dynamic>),
+      //         )
+      //         .toList() ??
+      //     [], // Provide empty list if null
     );
   }
   @override
@@ -64,7 +64,6 @@ productId:$productId,
   productDescription: $productDescription,
   productName: $productName,
   sellerUid: $sellerUid,
-  varients: ${varients.map((value) => value.toMap().toString())}
 )''';
   }
 
@@ -76,7 +75,7 @@ productId:$productId,
     String? categoryId,
     String? brandId,
     // List<String>? imageUrls, // Uncomment this if you start using imageUrls
-    List<ProductVarientModel>? varients,
+    // List<ProductVarientModel>? varients,
   }) {
     return ProductModel(
       productId: productId ?? this.productId,
@@ -85,8 +84,8 @@ productId:$productId,
       sellerUid: sellerUid ?? this.sellerUid,
       categoryId: categoryId ?? this.categoryId,
       brandId: brandId ?? this.brandId,
+
       // imageUrls: imageUrls ?? this.imageUrls, // Uncomment this if you start using imageUrls
-      varients: varients ?? this.varients,
     );
   }
 }

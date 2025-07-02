@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
 
 CustomAlertDialog(BuildContext context, ProductModel product) {
   showDialog(

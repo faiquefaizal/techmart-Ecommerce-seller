@@ -6,6 +6,7 @@ import 'package:techmart_seller/features/products/bloc/product_event.dart';
 import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
 import 'package:techmart_seller/features/products/services/product_service.dart';
 
 class EditProductButton extends StatelessWidget {
@@ -67,13 +68,13 @@ class EditProductButton extends StatelessWidget {
           productDescription: productDescription,
           productName: productName,
           sellerUid: sellerId,
-          varients: varients,
         );
 
         context.read<ProductBloc>().add(
           EditProductEvent(
             updatedProduct: productModel,
-            newVarientList: varientImageList,
+            updatedVarient: varients,
+            newVarientImageList: varientImageList,
           ),
         );
       },

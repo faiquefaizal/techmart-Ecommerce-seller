@@ -6,7 +6,8 @@ import 'package:techmart_seller/features/products/bloc/product_bloc.dart';
 import 'package:techmart_seller/features/products/bloc/product_event.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
+
 import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
 
 class SubmitProductButton extends StatelessWidget {
@@ -53,17 +54,16 @@ class SubmitProductButton extends StatelessWidget {
                     }
 
                     final product = ProductModel(
-                      productName: productNameController.text.trim(),
+                      productName:
+                          productNameController.text.toLowerCase().trim(),
                       productDescription:
                           productDescriptionController.text.trim(),
                       brandId: input.brandId!,
                       categoryId: input.categoryId!,
                       sellerUid: ProductService.userUid,
-                      varients:
-                          context
-                              .read<ProductVarientCubit>()
-                              .productVarientList,
                     );
+                    final varients =
+                        context.read<ProductVarientCubit>().productVarientList;
 
                     final images =
                         context
@@ -72,7 +72,7 @@ class SubmitProductButton extends StatelessWidget {
                     log(product.toString());
 
                     context.read<ProductBloc>().add(
-                      AddProductEvent(product, images),
+                      AddProductEvent(product, varients, images),
                     );
                   }
                   : null,

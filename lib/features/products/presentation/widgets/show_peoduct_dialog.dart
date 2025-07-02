@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
 import 'package:techmart_seller/features/products/models/product_varient_model.dart';
-import 'package:techmart_seller/features/products/services/product_service.dart';
+import 'package:techmart_seller/features/products/services/new_service.dart';
 
 void showProductDetailsDialog({
   required BuildContext parentContext,
@@ -119,17 +119,28 @@ void showProductDetailsDialog({
                     ),
                   ),
                   SizedBox(height: 8),
-                  product.varients.isEmpty
-                      ? Text(
-                        "No variants available",
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      )
-                      : ListView.builder(
+                  FutureBuilder(
+                    future: ProductService.fetchVarientsByProductId(
+                      product.productId!,
+                    ),
+                    builder: (context, asyncSnapshot) {
+                      if (asyncSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Text("Loading");
+                      }
+                      if (asyncSnapshot.data == null ||
+                          asyncSnapshot.data!.isEmpty) {
+                        Text(
+                          "No variants available",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        );
+                      }
+                      return ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: product.varients.length,
+                        itemCount: asyncSnapshot.data!.length,
                         itemBuilder: (context, index) {
-                          final variant = product.varients[index];
+                          final variant = asyncSnapshot.data![index];
                           final variantName = variant.variantAttributes.entries
                               .map((e) => "${e.key}: ${e.value}")
                               .join(", ");
@@ -178,7 +189,9 @@ void showProductDetailsDialog({
                             ),
                           );
                         },
-                      ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 16),
                   Align(
                     alignment: Alignment.centerRight,

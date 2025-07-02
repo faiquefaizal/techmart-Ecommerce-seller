@@ -1,4 +1,5 @@
 class ProductVarientModel {
+  String? variantId;
   Map<String, String?> variantAttributes;
   int quantity;
   int regularPrice;
@@ -7,6 +8,7 @@ class ProductVarientModel {
   List<String>? variantImageUrls;
 
   ProductVarientModel({
+    this.variantId,
     required this.buyingPrice,
     required this.quantity,
     required this.regularPrice,
@@ -17,6 +19,7 @@ class ProductVarientModel {
 
   Map<String, dynamic> toMap() {
     return {
+      "varientId": variantId,
       "variantAttributes": variantAttributes,
       "quantity": quantity,
       "regularPrice": regularPrice,
@@ -28,6 +31,7 @@ class ProductVarientModel {
 
   factory ProductVarientModel.fromMap(Map<String, dynamic> map) {
     return ProductVarientModel(
+      variantId: map["varientId"],
       buyingPrice: map["buyingPrice"],
       quantity: map["quantity"],
       regularPrice: map["regularPrice"],
@@ -40,6 +44,7 @@ class ProductVarientModel {
     );
   }
   ProductVarientModel copyWith({
+    String? variantId,
     int? buyingPrice,
     int? quantity,
     int? regularPrice,
@@ -48,6 +53,7 @@ class ProductVarientModel {
     List<String>? variantImageUrls,
   }) {
     return ProductVarientModel(
+      variantId: variantId ?? this.variantId,
       buyingPrice: buyingPrice ?? this.buyingPrice,
       quantity: quantity ?? this.quantity,
       regularPrice: regularPrice ?? this.regularPrice,

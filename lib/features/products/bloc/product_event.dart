@@ -2,26 +2,28 @@
 
 import 'dart:typed_data';
 import 'package:techmart_seller/features/products/models/product_model.dart';
+import 'package:techmart_seller/features/products/models/product_varient_model.dart';
 
 abstract class ProductEvent {}
 
 class AddProductEvent extends ProductEvent {
   final ProductModel product;
-  // final List<Uint8List> images;
+  final List<ProductVarientModel> variants;
   final List<List<Uint8List>?>? varientImages;
-  AddProductEvent(this.product, this.varientImages);
+  AddProductEvent(this.product, this.variants, this.varientImages);
 }
 
 class EditProductEvent extends ProductEvent {
   final ProductModel updatedProduct;
+  final List<ProductVarientModel> updatedVarient;
   // final List<Uint8List> newMainImagesBytes; // Newly picked images as bytes
   final List<List<Uint8List>?>?
-  newVarientList; // Original URLs from the product being edited
+  newVarientImageList; // Original URLs from the product being edited
 
   EditProductEvent({
     required this.updatedProduct,
-    // required this.newMainImagesBytes,
-    required this.newVarientList,
+    required this.updatedVarient,
+    required this.newVarientImageList,
   });
 }
 
