@@ -10,7 +10,10 @@ class CustemTextFIeld extends StatefulWidget {
   final bool password;
   final bool readOnly;
   String? Function(String?)? validator;
+  VoidCallback? onTap;
+  TextInputType? keyboardType;
   CustemTextFIeld({
+    super.key,
     this.maxline,
     required this.label,
     required this.hintText,
@@ -19,6 +22,8 @@ class CustemTextFIeld extends StatefulWidget {
     this.readOnly = false,
     this.validator,
     this.minLine,
+    this.onTap,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -49,7 +54,8 @@ class _CustemTextFIeldState extends State<CustemTextFIeld> {
           readOnly: widget.readOnly,
           controller: widget.controller,
           obscureText: _obscureText,
-
+          onTap: widget.onTap,
+          keyboardType: widget.keyboardType,
           decoration: InputDecoration(
             hintText: widget.hintText,
             filled: true,

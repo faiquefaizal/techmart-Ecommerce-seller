@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techmart_seller/core/funtion/pick_images/cubit/image_cubit.dart';
+import 'package:techmart_seller/features/coupens/presentation/screens/coupen.dart';
 import 'package:techmart_seller/features/products/cubit/catagory_cubit.dart';
 import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
@@ -77,6 +78,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 onTap: (index, _) => pageController.jumpToPage(index),
                 icon: Icon(Icons.undo),
               ),
+              SideMenuItem(
+                title: 'Coupens',
+                onTap: (index, _) => pageController.jumpToPage(index),
+                icon: Icon(Icons.local_offer),
+              ),
             ],
           ),
           Expanded(
@@ -90,12 +96,14 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                     setState(() {
                       editingProduct = product;
                     });
-                    pageController.jumpToPage(6); // Navigate to edit screen
+                    pageController.jumpToPage(6);
                   },
                 ),
                 AddProductScreen(),
                 OrdersScreen(),
+
                 ReturnsScreen(),
+                CouponScreen(),
                 if (editingProduct != null)
                   MultiBlocProvider(
                     providers: [

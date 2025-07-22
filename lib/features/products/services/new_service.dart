@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:techmart_seller/features/products/models/catagory_varient_model.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
 import 'package:techmart_seller/features/products/models/product_varient_model.dart';
-import 'package:techmart_seller/features/products/utils/generate_firestore_id.dart'; // Ensure this is imported
+import 'package:techmart_seller/features/products/utils/generate_firestore_id.dart';
 
 class ProductService {
   static final CollectionReference _productRef = FirebaseFirestore.instance
@@ -72,7 +72,6 @@ class ProductService {
     return imageUrls;
   }
 
-  /// Fetch products filtered by seller UID (for display on seller's product list)
   static Stream<List<ProductModel>> fetchProductsBySeller() {
     return _productRef
         .where("sellerUid", isEqualTo: userUid)
@@ -162,9 +161,9 @@ class ProductService {
         "productI os null",
       );
       await _productRef.doc(product.productId).set(product.toMap());
-      log("✅ Product added successfully!");
+      log("Product added successfully!");
     } catch (e) {
-      log("❌ Error adding product: $e");
+      log("Error adding product: $e");
       rethrow;
     }
   }
@@ -199,12 +198,10 @@ class ProductService {
               .toList();
 
       final exitingId =
-          existingVarients.map((varient) => varient.variantId).toSet();
-      final updatedID =
-          existingVarients
-              .map((varient) => varient.variantId)
-              .whereType<String>()
-              .toSet();
+          existingVarients.map((v) => v.variantId).whereType<String>().toSet();
+      final updatedIds =
+          varientList.map((v) => v.variantId).whereType<String>().toSet();
+
       for (var i = 0; i < varientList.length; i++) {
         final varient = varientList[i];
         if (varient.variantId != null &&
@@ -228,7 +225,7 @@ class ProductService {
         varientDocRef.doc(newVarient.variantId).set(newVarient.toMap());
       }
       for (var element in existingVarients) {
-        if (!updatedID.contains(element.variantId)) {
+        if (!updatedIds.contains(element.variantId)) {
           await varientDocRef.doc(element.variantId).delete();
           log("varietn deleted");
           continue;
@@ -242,7 +239,7 @@ class ProductService {
       log("Product and variants updated successfully.");
       // Fetch the existing product to preserve unchanged variants
     } catch (e) {
-      log("❌ Error editing product: $e");
+      log(" Error editing product: $e");
       rethrow;
     }
   }
@@ -305,16 +302,14 @@ class ProductService {
         log("🗑️ Variant deleted: ${variant.variantId}");
       }
 
-      // 4. Delete product document
       await productDocRef.delete();
-      log("✅ Product deleted successfully!");
+      log("Product deleted successfully!");
     } catch (e) {
-      log("❌ Error deleting product: $e");
+      log(" Error deleting product: $e");
       rethrow;
     }
   }
 
-  /// Helper to delete an image from Cloudinary
   Future<void> _deleteImageFromCloudinary(String imageUrl) async {
     try {
       final uri = Uri.parse(imageUrl);
@@ -327,7 +322,6 @@ class ProductService {
         publicId =
             pathSegments.sublist(uploadIndex + 1).join('/').split('.').first;
       } else if (pathSegments.isNotEmpty) {
-        // Fallback for older/different URL structures (e.g., just filename)
         publicId = pathSegments.last.split('.').first;
       }
 
@@ -352,14 +346,14 @@ class ProductService {
       );
 
       if (response.statusCode == 200) {
-        log("✅ Image deleted from Cloudinary: $publicId");
+        log(" Image deleted from Cloudinary: $publicId");
       } else {
         log(
-          "❌ Failed to delete image from Cloudinary: ${response.statusCode} - ${response.body}",
+          " Failed to delete image from Cloudinary: ${response.statusCode} - ${response.body}",
         );
       }
     } catch (e) {
-      log("❌ Error deleting image from Cloudinary: $e");
+      log(" Error deleting image from Cloudinary: $e");
     }
   }
 

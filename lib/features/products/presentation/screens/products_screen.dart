@@ -135,13 +135,14 @@ class ProductsScreen extends StatelessWidget {
                                 data.productId!,
                               ),
                               builder: (context, asyncSnapshot) {
-                                if (snapshot.connectionState ==
+                                if (asyncSnapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return const Text("Loading...");
-                                } else if (snapshot.hasError) {
+                                } else if (asyncSnapshot.hasError) {
                                   return const Text("Error");
+                                } else if (!asyncSnapshot.hasData) {
+                                  return const Text("Is empty");
                                 }
-
                                 final varientList = asyncSnapshot.data;
                                 final sellingPrice = getMaxMinPriceFromVarients(
                                   varientList!,
@@ -157,13 +158,14 @@ class ProductsScreen extends StatelessWidget {
                                 data.productId!,
                               ),
                               builder: (context, asyncSnapshot) {
-                                if (snapshot.connectionState ==
+                                if (asyncSnapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return const Text("Loading...");
-                                } else if (snapshot.hasError) {
+                                } else if (asyncSnapshot.hasError) {
                                   return const Text("Error");
+                                } else if (!asyncSnapshot.hasData) {
+                                  return const Text("Is empty");
                                 }
-
                                 final varientList = asyncSnapshot.data;
                                 final totalQuatity = getTotalStock(
                                   varientList!,
