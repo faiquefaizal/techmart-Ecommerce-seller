@@ -8,8 +8,7 @@ import 'package:techmart_seller/features/authentication/bloc/bloc/auth_bloc.dart
 import 'package:techmart_seller/features/coupens/bloc/coupen_bloc.dart';
 import 'package:techmart_seller/features/coupens/presentation/screens/coupen.dart';
 import 'package:techmart_seller/features/products/bloc/product_bloc.dart';
-import 'package:techmart_seller/features/products/services/new_service.dart'
-    show ProductService;
+import 'package:techmart_seller/features/products/services/new_service.dart';
 import 'package:techmart_seller/features/products/services/product_service.dart';
 import 'package:techmart_seller/features/authentication/screens/login_screen.dart';
 import 'package:techmart_seller/firebase_options.dart';
@@ -49,8 +48,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: CouponScreen(),
-        // home: LoginScreen(),
+        home: LoginScreen(),
       ),
     );
   }

@@ -38,7 +38,7 @@ class ProductDiscriptionCard extends StatelessWidget {
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Description is required";
-                } else if (value.length > 1200) {
+                } else if (value.length > 2000) {
                   return "Product name should not exceed 350 characters";
                 }
                 return null;
