@@ -25,7 +25,7 @@ class ProductVarientModel {
       "regularPrice": regularPrice,
       "sellingPrice": sellingPrice,
       "buyingPrice": buyingPrice,
-      "variantImageUrls": variantImageUrls, // <--- ADDED TO toMap()
+      "variantImageUrls": variantImageUrls,
     };
   }
 

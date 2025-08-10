@@ -8,6 +8,9 @@ import 'package:techmart_seller/features/authentication/models/seller_model.dart
 class AuthenticationService {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore db = FirebaseFirestore.instance;
+  static String? get sellerId {
+    FirebaseAuth.instance.currentUser?.uid;
+  }
 
   Future<String?> registerSeller({
     required String email,

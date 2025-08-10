@@ -1,0 +1,75 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
+
+import 'package:techmart_seller/features/orders/models/address.dart';
+import 'package:techmart_seller/features/orders/service/order_service.dart';
+
+class OrderModel extends Equatable {
+  final String orderId;
+  final String productId;
+  final String varientId;
+  final String userId;
+  final String sellerId;
+  final DateTime createTime;
+  final int quantity;
+  final double total;
+  final AddressModel address;
+  final String? paymentId;
+  final String status;
+  final String? returnReason;
+  final double? deliveryCharge;
+  final String? couponCode;
+  final String paymentMode;
+  const OrderModel({
+    required this.productId,
+    required this.varientId,
+    required this.orderId,
+    required this.userId,
+    required this.sellerId,
+    required this.createTime,
+    required this.quantity,
+    required this.total,
+    required this.address,
+    this.paymentId,
+    required this.status,
+    this.returnReason,
+
+    this.deliveryCharge,
+
+    this.couponCode,
+  }) : paymentMode = (paymentId != null) ? "Online" : "COD";
+
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    return OrderModel(
+      orderId: json['orderId'] ?? '',
+      userId: json['userId'] ?? '',
+      sellerId: json['sellerId'] ?? '',
+      varientId: json["productId"] ?? "",
+      productId: json["varientId"] ?? "",
+      createTime: (json['createTime'] as Timestamp).toDate(),
+      quantity: json['quantity'] ?? 0,
+      total: (json['total'] as num).toDouble(),
+      address: AddressModel.fromMap(json['address']),
+      paymentId: json['paymentId'] ?? '',
+      status: json['status'] ?? '',
+      returnReason: json['returnReason'],
+
+      deliveryCharge: (json['deliveryCharge'] as num?)?.toDouble(),
+
+      couponCode: json['couponCode'],
+    );
+  }
+  @override
+  String toString() {
+    return "OrderModel(orderId: $orderId, userId: $userId, sellerId: $sellerId, createTime: $createTime, quantity: $quantity, total: $total, address: $address, status: $status)";
+  }
+
+  Future<String> get fullName async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+    return userDoc.data()?["userId"];
+  }
+
+  @override
+  List<Object> get props => [orderId, status];
+}

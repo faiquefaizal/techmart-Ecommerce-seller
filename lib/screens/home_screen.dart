@@ -3,6 +3,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techmart_seller/core/funtion/pick_images/cubit/image_cubit.dart';
 import 'package:techmart_seller/features/coupens/presentation/screens/coupen.dart';
+import 'package:techmart_seller/features/orders/presentation/screens/orders_screen.dart';
 import 'package:techmart_seller/features/products/cubit/catagory_cubit.dart';
 import 'package:techmart_seller/features/products/cubit/product_varient_cubit.dart';
 import 'package:techmart_seller/features/products/models/product_model.dart';
@@ -10,11 +11,9 @@ import 'package:techmart_seller/features/products/presentation/screens/add_produ
 import 'package:techmart_seller/features/products/presentation/screens/edit_product_screen.dart';
 import 'package:techmart_seller/features/products/presentation/screens/products_screen.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
-import 'package:techmart_seller/screens/categaries_screen.dart';
 
 import 'dashboard_screen.dart';
 
-import 'orders_screen.dart';
 import 'returns_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
