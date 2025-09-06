@@ -44,8 +44,10 @@ class OrderModel extends Equatable {
       orderId: json['orderId'] ?? '',
       userId: json['userId'] ?? '',
       sellerId: json['sellerId'] ?? '',
-      varientId: json["productId"] ?? "",
-      productId: json["varientId"] ?? "",
+      varientId: json["varientId"] ?? "",
+
+      productId: json["productId"] ?? "",
+
       createTime: (json['createTime'] as Timestamp).toDate(),
       quantity: json['quantity'] ?? 0,
       total: (json['total'] as num).toDouble(),

@@ -7,12 +7,15 @@ import 'package:techmart_seller/core/funtion/pick_images/cubit/image_cubit.dart'
 import 'package:techmart_seller/features/authentication/bloc/bloc/auth_bloc.dart';
 import 'package:techmart_seller/features/coupens/bloc/coupen_bloc.dart';
 import 'package:techmart_seller/features/coupens/presentation/screens/coupen.dart';
+import 'package:techmart_seller/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:techmart_seller/features/orders/bloc/order_bloc.dart';
 import 'package:techmart_seller/features/orders/service/order_service.dart';
 import 'package:techmart_seller/features/products/bloc/product_bloc.dart';
 import 'package:techmart_seller/features/products/services/new_service.dart';
 import 'package:techmart_seller/features/products/services/product_service.dart';
 import 'package:techmart_seller/features/authentication/screens/login_screen.dart';
+import 'package:techmart_seller/features/return/bloc/return_bloc.dart';
+import 'package:techmart_seller/features/return/service/return_service.dart';
 import 'package:techmart_seller/firebase_options.dart';
 import 'package:techmart_seller/screens/home_screen.dart';
 
@@ -32,6 +35,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => DashboardCubit()..setupStreams()),
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => ProductBloc(ProductService())),
         BlocProvider(
@@ -39,6 +43,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => OrderBloc(OrderService())..add(FetchOrder()),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  ReturnBloc(ReturnService())..add(FetchReturnRequest()),
         ),
       ],
       child: MaterialApp(

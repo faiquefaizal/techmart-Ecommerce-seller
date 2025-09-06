@@ -11,10 +11,9 @@ import 'package:techmart_seller/features/products/presentation/screens/add_produ
 import 'package:techmart_seller/features/products/presentation/screens/edit_product_screen.dart';
 import 'package:techmart_seller/features/products/presentation/screens/products_screen.dart';
 import 'package:techmart_seller/features/products/product_varients/cubit/current_varient_cubit.dart';
+import 'package:techmart_seller/features/return/presentation/screens/return_screen.dart';
 
-import 'dashboard_screen.dart';
-
-import 'returns_screen.dart';
+import '../features/dashboard/presentation/screens/dashboard_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -62,11 +61,11 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 onTap: (index, _) => pageController.jumpToPage(index),
                 icon: Icon(Icons.add_box),
               ),
-              SideMenuItem(
-                title: 'Categories',
-                onTap: (index, _) => pageController.jumpToPage(index),
-                icon: Icon(Icons.category),
-              ),
+              // SideMenuItem(
+              //   title: 'Categories',
+              //   onTap: (index, _) => pageController.jumpToPage(index),
+              //   icon: Icon(Icons.category),
+              // ),
               SideMenuItem(
                 title: 'Orders',
                 onTap: (index, _) => pageController.jumpToPage(index),
@@ -101,7 +100,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 AddProductScreen(),
                 OrdersScreen(),
 
-                ReturnsScreen(),
+                ReturnScreen(),
                 CouponScreen(),
                 if (editingProduct != null)
                   MultiBlocProvider(
@@ -117,7 +116,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                         setState(() {
                           editingProduct = null;
                         });
-                        pageController.jumpToPage(1); // Back to products page
+                        pageController.jumpToPage(1);
                       },
                     ),
                   )
