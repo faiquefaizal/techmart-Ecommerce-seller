@@ -21,7 +21,8 @@ class OrdersListScreen extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: DataTable(
             columnSpacing: 70,
-
+            dataRowMinHeight: 40,
+            dataRowMaxHeight: 55,
             columns: const [
               DataColumn(label: Text("ORDER ID")),
               DataColumn(label: Text("CUSTOMER")),

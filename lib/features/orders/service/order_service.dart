@@ -67,7 +67,7 @@ class OrderService {
     String varientId,
   ) async {
     try {
-      final productDoc = await _productRef.doc(varientId).get();
+      final productDoc = await _productRef.doc(productId).get();
       if (!productDoc.exists) {
         log(_productRef.toString());
         log(productDoc.toString());
@@ -78,9 +78,9 @@ class OrderService {
       }
       final varientDoc =
           await _productRef
-              .doc(varientId)
-              .collection("varients")
               .doc(productId)
+              .collection("varients")
+              .doc(varientId)
               .get();
       if (!productDoc.exists || !varientDoc.exists) {
         log("${productDoc.id},${varientDoc.id}");
