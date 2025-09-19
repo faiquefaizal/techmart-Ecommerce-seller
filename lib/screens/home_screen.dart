@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techmart_seller/core/funtion/pick_images/cubit/image_cubit.dart';
+import 'package:techmart_seller/core/widgets/confirm_alert_dialog.dart';
+import 'package:techmart_seller/features/authentication/bloc/bloc/auth_bloc.dart';
+import 'package:techmart_seller/features/authentication/screens/login_screen.dart';
 import 'package:techmart_seller/features/coupens/presentation/screens/coupen.dart';
 import 'package:techmart_seller/features/orders/presentation/screens/orders_screen.dart';
 import 'package:techmart_seller/features/products/cubit/catagory_cubit.dart';
@@ -80,6 +83,14 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                 title: 'Coupens',
                 onTap: (index, _) => pageController.jumpToPage(index),
                 icon: Icon(Icons.local_offer),
+              ),
+              SideMenuItem(
+                title: "Log Out",
+                onTap:
+                    (_, _) => showLogOutDialog(context, () {
+                      context.read<AuthBloc>().add(Logout());
+                    }),
+                icon: Icon(Icons.logout),
               ),
             ],
           ),

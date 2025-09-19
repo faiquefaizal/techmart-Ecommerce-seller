@@ -28,3 +28,7 @@ class CheckVerificationStatus extends AuthEvent {
   final String userId;
   CheckVerificationStatus(this.userId);
 }
+
+class AuthCheck extends AuthEvent {}
+
+class Logout extends AuthEvent {}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:techmart_seller/core/validation.dart';
 import 'package:techmart_seller/core/widgets/button_widget.dart';
 import 'package:techmart_seller/core/widgets/dialog_widget.dart';
 import 'package:techmart_seller/core/widgets/snakbar_widget.dart';
@@ -19,6 +20,13 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+        if (state is AuthInitial) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (route) => false,
+          );
+        }
+
         if (state is ErrorState) {
           if (Navigator.canPop(context)) {
             Navigator.of(context).pop();
@@ -62,29 +70,15 @@ class LoginScreen extends StatelessWidget {
                         label: "Email",
                         hintText: "Enter your Email",
                         controller: emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Email cannot be empty";
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                            return "Enter a valid email";
-                          }
-                          return null;
-                        },
+                        validator: Validation.emailValidator,
                       ),
                       CustemTextFIeld(
                         label: "Password",
                         hintText: "Enter your Password",
                         controller: passwordController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Password cannot be empty";
-                          }
-                          if (value.length < 6) {
-                            return "Password must be at least 6 characters";
-                          }
-                          return null;
-                        },
+                        validator: Validation.passwordValidator,
+                        password: true,
+                        minLine: 1,
                       ),
                       SizedBox(height: 10),
                       CustemButton(

@@ -1,7 +1,7 @@
 {
   "hosting": {
-    "site": "seller-bc047",
-    "public": "build/web",
+    "site": "rahilk",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",

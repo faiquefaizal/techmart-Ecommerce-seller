@@ -25,64 +25,74 @@ class AddVariantButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: ElevatedButton(
-        onPressed: () {
-          final inputState = context.read<CurrentVarientCubit>().state;
+    return BlocListener<ProductVarientCubit, ProductVarientState>(
+      listener: (context, state) {
+        if (state is ProductVarientError) {
+          custemSnakbar(context, state.message, Colors.red);
+        }
+      },
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: ElevatedButton(
+          onPressed: () {
+            final inputState = context.read<CurrentVarientCubit>().state;
 
-          if (!formKey.currentState!.validate()) {
-            custemSnakbar(
-              context,
-              "Please fill all required fields",
-              Colors.red,
+            if (!formKey.currentState!.validate()) {
+              custemSnakbar(
+                context,
+                "Please fill all required fields",
+                Colors.red,
+              );
+              return;
+            }
+
+            if (inputState.categoryId == null || inputState.brandId == null) {
+              custemSnakbar(
+                context,
+                "Please select category and brand",
+                Colors.red,
+              );
+              return;
+            }
+
+            final images = context.read<ImageCubit>().currentImages;
+            if (images.isEmpty) {
+              custemSnakbar(context, "Add at least one image", Colors.red);
+              return;
+            }
+
+            if (inputState.variantAttributes.isEmpty) {
+              custemSnakbar(
+                context,
+                "Select at least one variant attribute",
+                Colors.red,
+              );
+              return;
+            }
+
+            final model = ProductVarientModel(
+              buyingPrice: int.parse(buyingPriceController.text.trim()),
+              quantity: int.parse(quantityController.text.trim()),
+              regularPrice: int.parse(regularPriceController.text.trim()),
+              sellingPrice: int.parse(sellingPriceController.text.trim()),
+              variantAttributes: inputState.variantAttributes,
             );
-            return;
-          }
 
-          if (inputState.categoryId == null || inputState.brandId == null) {
-            custemSnakbar(
-              context,
-              "Please select category and brand",
-              Colors.red,
+            context.read<ProductVarientCubit>().addProductVarient(
+              model,
+              images,
             );
-            return;
-          }
+            context.read<ImageCubit>().clearImage();
+            context.read<CurrentVarientCubit>().clearInputs();
+            buyingPriceController.clear();
+            quantityController.clear();
+            regularPriceController.clear();
+            sellingPriceController.clear();
 
-          final images = context.read<ImageCubit>().currentImages;
-          if (images.isEmpty) {
-            custemSnakbar(context, "Add at least one image", Colors.red);
-            return;
-          }
-
-          if (inputState.variantAttributes.isEmpty) {
-            custemSnakbar(
-              context,
-              "Select at least one variant attribute",
-              Colors.red,
-            );
-            return;
-          }
-
-          final model = ProductVarientModel(
-            buyingPrice: int.parse(buyingPriceController.text.trim()),
-            quantity: int.parse(quantityController.text.trim()),
-            regularPrice: int.parse(regularPriceController.text.trim()),
-            sellingPrice: int.parse(sellingPriceController.text.trim()),
-            variantAttributes: inputState.variantAttributes,
-          );
-
-          context.read<ProductVarientCubit>().addProductVarient(model, images);
-          context.read<ImageCubit>().clearImage();
-          context.read<CurrentVarientCubit>().clearInputs();
-          buyingPriceController.clear();
-          quantityController.clear();
-          regularPriceController.clear();
-          sellingPriceController.clear();
-
-          custemSnakbar(context, "Variant added!", Colors.green);
-        },
-        child: Text("Add Variant"),
+            custemSnakbar(context, "Variant added!", Colors.green);
+          },
+          child: Text("Add Variant"),
+        ),
       ),
     );
   }

@@ -72,4 +72,8 @@ class AuthenticationService {
       }
     });
   }
+
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
 }

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:techmart_seller/features/products/models/product_varient_model.dart';
+import 'package:techmart_seller/features/products/utils/generate_firestore_id.dart';
 
 part 'product_varient_state.dart';
 
@@ -19,11 +20,31 @@ class ProductVarientCubit extends Cubit<ProductVarientState> {
   List<List<String>> get imageProductVarientUrlList =>
       List.unmodifiable(_imageVarietUrlList);
 
+  bool isDuplicateVariant(ProductVarientModel newVariant) {
+    return _productVarientList.any(
+      (existingVariant) => areVariantAttributesEqual(
+        existingVariant.variantAttributes,
+        newVariant.variantAttributes,
+      ),
+    );
+  }
+
   void addProductVarient(
     ProductVarientModel product,
     List<Uint8List> rawImages,
   ) {
     try {
+      if (isDuplicateVariant(product)) {
+        emit(
+          ProductVarientError(
+            message: "A variant with the same attributes already exists!",
+            productVarient: List.from(_productVarientList),
+            imageList: List.from(_imagesVarientList),
+            imageUrlList: List.from(_imageVarietUrlList),
+          ),
+        );
+        return;
+      }
       _productVarientList.add(product);
       _imagesVarientList.add(rawImages.isEmpty ? null : rawImages);
       _imageVarietUrlList.add(product.variantImageUrls ?? []);

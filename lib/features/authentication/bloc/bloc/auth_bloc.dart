@@ -15,9 +15,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // StreamSubscription<bool>? _sellerSubscription;
 
   AuthBloc() : super(AuthInitial()) {
+    on<AuthCheck>(_authCheck);
     on<LoginAuth>(_loginEvent);
     on<SignUpAuth>(_registerEvent);
-    // on<CheckVerificationStatus>(_checkVerificationStatus);
+    on<Logout>(_logout);
+  }
+  _logout(Logout event, Emitter<AuthState> emit) {
+    emit(AuthLoadingState());
+    auth.logout();
+    emit(AuthInitial());
+  }
+
+  Future<void> _authCheck(AuthCheck event, Emitter<AuthState> emit) async {
+    emit(AuthLoadingState());
+    try {
+      final loggedIn = auth.loginCheck(); // Your existing login check
+      if (loggedIn) {
+        final userId = FirebaseAuth.instance.currentUser!.uid;
+        await _startListeningToSellerVerification(userId, emit);
+      } else {
+        emit(AuthInitial());
+      }
+    } catch (e) {
+      emit(ErrorState(e.toString()));
+    }
   }
 
   _loginEvent(LoginAuth event, Emitter<AuthState> emit) async {

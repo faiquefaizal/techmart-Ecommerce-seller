@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:techmart_seller/core/validation.dart';
 import 'package:techmart_seller/core/widgets/button_widget.dart';
 import 'package:techmart_seller/core/widgets/dialog_widget.dart';
 import 'package:techmart_seller/core/widgets/snakbar_widget.dart';
@@ -73,76 +74,44 @@ class SignUpScreen extends StatelessWidget {
                       label: "Business Name",
                       hintText: "Enter your business name",
                       controller: _businessnamecontroller,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Business name is required';
-                        }
-                        return null;
-                      },
+                      validator: Validation.businessNameValidator,
                     ),
                     CustemTextFIeld(
                       label: "Seller Name",
                       hintText: "Enter your name",
                       controller: _namecontroller,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Name is required';
-                        }
-                        return null;
-                      },
+                      validator: Validation.emailValidator,
                     ),
                     CustemTextFIeld(
                       label: "Email",
                       hintText: "Enter your Email",
                       controller: _emailcontroller,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Email cannot be empty";
-                        }
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                          return "Enter a valid email";
-                        }
-                        return null;
-                      },
+                      validator: Validation.emailValidator,
                     ),
                     CustemTextFIeld(
                       label: "Password",
                       hintText: "Create password",
                       controller: _passwordcontroller,
                       password: true,
-                      validator: (value) {
-                        if (value == null || value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                      validator: Validation.passwordValidator,
                     ),
                     CustemTextFIeld(
                       label: "Confirm your password",
                       hintText: "Re-enter your password",
                       controller: _confirmPasswordController,
                       password: true,
-                      validator: (value) {
-                        if (value != _passwordcontroller.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
+                      validator:
+                          (value) => Validation.confirmPasswordValidator(
+                            value,
+                            _passwordcontroller,
+                          ),
                     ),
                     CustemTextFIeld(
                       label: "Phone Number",
                       hintText: "+91 9876543210",
                       controller: _phoneNumber,
 
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Phone number is required';
-                        }
-                        if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
-                          return 'Enter a valid phone number';
-                        }
-                        return null;
-                      },
+                      validator: Validation.phoneNumberValidator,
                     ),
                     SizedBox(height: 20),
                     CustemButton(

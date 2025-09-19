@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => DashboardCubit()..setupStreams()),
-        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => AuthBloc()..add(AuthCheck())),
         BlocProvider(create: (context) => ProductBloc(ProductService())),
         BlocProvider(
           create: (context) => CoupenBloc()..add(FechCoupensEvent()),
